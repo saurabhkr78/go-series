@@ -1,0 +1,13 @@
+GET http://localhost:8080/movies
+###
+POST http://localhost:8080/movies
+Content-Type: application/json
+
+{
+  "title": "Tenet",
+  "year": 2022,
+  "director": {
+    "firstname": "Chris",
+    "lastname": "Nolan"
+  }
+}

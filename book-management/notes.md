@@ -3,13 +3,13 @@
 
     internal → domain code
 
-    models → GORM models
+    models → GORM models i.e structure of your data in db
 
-    handlers → request handlers
+    handlers → request handlers ie. when request arrives what we gonna do
 
-    routes → route definitions
+    routes → route definitions i.e map the url to a function
 
-    database → db connection
+    database → db connection  i.e talk to the database.
 
     config → environment variables
 

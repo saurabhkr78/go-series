@@ -2,7 +2,7 @@ package routes
 
 import (
 	"book-management/internal/handlers"
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 )
 
 func BookRoutes(app *fiber.App) {
@@ -10,7 +10,7 @@ func BookRoutes(app *fiber.App) {
 	book := app.Group("/books")
 
 	book.Get("/", handlers.GetBooks)
-	book.Get(":/id", handlers.GetBook)
+	book.Get("/:id", handlers.GetBook)
 	book.Post("/", handlers.CreateBook)
 	book.Put("/:id", handlers.UpdateBook)
 	book.Delete("/:id", handlers.DeleteBook)

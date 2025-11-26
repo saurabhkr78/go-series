@@ -31,10 +31,15 @@ func ConnectDB() {
 	if err != nil {
 		log.Fatal("Could not connect to the database", err)
 	}
-	fmt.Println("Connected to the database successfully")
+
+	//run the database migrations
+	err = database.AutoMigrate(&models.Book{})
+	if err != nil {
+		log.Fatal("Could not migrate the database", err)
+	}
 
 	//assign the database connection object to the DB variable
 	DB = database
-	//run the database migrations
-	database.AutoMigrate(&models.Book{})
+
+	fmt.Println("Connected to the database successfully and auto migrated")
 }

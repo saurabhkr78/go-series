@@ -3,7 +3,7 @@ package main
 import (
 	"book-management/internal/database"
 	"book-management/internal/routes"
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 )
 
 func main() {

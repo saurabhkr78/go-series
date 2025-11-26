@@ -1,0 +1,33 @@
+### GET ALL BOOKS
+GET http://localhost:8000/books/
+
+
+### GET ONE BOOK
+GET http://localhost:8000/books/1
+
+
+### CREATE BOOK
+POST http://localhost:8000/books/
+Content-Type: application/json
+
+{
+  "title": "Atomic Habits",
+  "author": "James Clear",
+  "description": "One of the best habit books",
+  "isbn": "978-0593189641",
+  "price": 299
+}
+
+
+### UPDATE BOOK
+PUT http://localhost:8000/books/1
+Content-Type: application/json
+
+{
+  "title": "Updated Book Title",
+  "price": 399
+}
+
+
+### DELETE BOOK
+DELETE http://localhost:8000/books/1

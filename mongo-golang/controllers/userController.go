@@ -1,7 +1,11 @@
 package controllers
 
 import (
+	"encoding/json"
 	"net/http"
+
+	""
+	"mongo-golang/models"
 
 	"github.com/julienschmidt/httprouter"
 	"gopkg.in/mgo.v2"
@@ -73,14 +77,41 @@ Get User steps:
 | 4    | What work needs to be done?          |
 | 5    | What response should client get?     |
 */
-func (uc *UserController) GetUser(w http.ResponseWriter, r *http.Request, p httprouter.Params) { //struct method:Method with pointer receiver on UserController
+
+func (uc *UserController) GetUser(
+	w http.ResponseWriter,
+	r *http.Request,
+	p httprouter.Params,
+) {
+	// Step 1: Extract input
 	id := p.ByName("id")
+
+	// Step 2: Validate input
 	if !bson.IsObjectIdHex(id) {
-		w.WriteHeader(http.StatusNotFound) // whosoever is making call we need to send them the header which wil contain context, statusCode etc
+		http.Error(w, "invalid user id", http.StatusBadRequest)
+		return
 	}
+
+	// Step 3: Get DB session (per request)
 	session := uc.session.Copy()
 	defer session.Close()
 
+	collection := session.DB("mongo-golang").C("users") //here C is collection
+
+	// Step 4: Perform business logic
+	var user models.User
+	err := collection.FindId(bson.ObjectIdHex(id)).One(&user)
+	if err != nil {
+		http.Error(w, "user not found", http.StatusNotFound)
+		return
+	}
+
+	// Step 5: Send response
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(user)
 }
-func (uc *UserController) CreateUser() {}
+
+func (uc *UserController) CreateUser() {
+
+}
 func (uc *UserController) DeleteUser() {}

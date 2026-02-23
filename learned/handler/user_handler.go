@@ -1,20 +1,20 @@
 package handler
 
-
 import (
 	"encoding/json"
 	"net/http"
 	"strconv"
 
+	"github.com/go-chi/chi/v5"
 	"learned/dto"
 	"learned/service"
 )
 
 type UserHandler struct {
-	service *service.UserService
+	service service.UserService
 }
 
-func NewUserHandler(service *service.UserService) *UserHandler {
+func NewUserHandler(service service.UserService) *UserHandler {
 	return &UserHandler{service: service}
 }
 
@@ -39,7 +39,7 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 func (h *UserHandler) GetUserByID(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	idStr := r.URL.Query().Get("id")
+	idStr := chi.URLParam(r, "id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
 		http.Error(w, "invalid user id", http.StatusBadRequest)
@@ -57,7 +57,7 @@ func (h *UserHandler) GetUserByID(w http.ResponseWriter, r *http.Request) {
 func (h *UserHandler) PatchUser(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	idStr := r.URL.Query().Get("id")
+	idStr := chi.URLParam(r, "id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
 		http.Error(w, "invalid user id", http.StatusBadRequest)
@@ -81,7 +81,7 @@ func (h *UserHandler) PatchUser(w http.ResponseWriter, r *http.Request) {
 func (h *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	idStr := r.URL.Query().Get("id")
+	idStr := chi.URLParam(r, "id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
 		http.Error(w, "invalid user id", http.StatusBadRequest)

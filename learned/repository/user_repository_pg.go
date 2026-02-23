@@ -3,16 +3,16 @@ package repository
 import (
 	"context"
 
-	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/jackc/pgx/v5"
 	"learned/domain"
 )
 
 type userRepository struct {
-	db *pgxpool.Pool
+	db DBExecutor
 }
 
 // constructor returns INTERFACE
-func NewUserRepository(db *pgxpool.Pool) UserRepository {
+func NewUserRepository(db DBExecutor) UserRepository {
 	return &userRepository{db: db}
 }
 func (r *userRepository) Create(ctx context.Context, user *domain.User) error {
@@ -57,6 +57,9 @@ func (r *userRepository) GetByID(ctx context.Context, id int) (*domain.User, err
 		Scan(&user.ID, &user.Name, &user.Email)
 
 	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil, domain.ErrNotFound
+		}
 		return nil, err
 	}
 

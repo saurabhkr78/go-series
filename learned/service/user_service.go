@@ -2,34 +2,23 @@ package service
 
 import (
 	"context"
-	"errors"
 	"learned/domain"
 	"learned/dto"
 	"learned/repository"
 	"strings"
 )
 
-type UserService struct {
+type userService struct {
 	repo repository.UserRepository
 }
 
-func NewUserService(repo repository.UserRepository) *UserService {
-	return &UserService{repo: repo}
+func NewUserService(repo repository.UserRepository) userService {
+	return userService{repo: repo}
 }
 
-var (
-	ErrInvalidName   = errors.New("name cannot be empty")
-	ErrInvalidEmail  = errors.New("email cannot be empty")
-	ErrInvalidUserID = errors.New("invalid user id")
-	ErrMissingFields = errors.New("all fields are required")
-)
-
-func (s *UserService) CreateUser(ctx context.Context, input dto.CreateUserInput) (*domain.User, error) {
-	if input.Name == "" {
-		return nil, ErrInvalidName
-	}
-	if input.Email == "" {
-		return nil, ErrInvalidEmail
+func (s userService) CreateUser(ctx context.Context, input dto.CreateUserInput) (*domain.User, error) {
+	if input.Name == "" || input.Email == "" {
+		return nil, domain.ErrInvalidInput
 	}
 
 	user := &domain.User{
@@ -42,7 +31,7 @@ func (s *UserService) CreateUser(ctx context.Context, input dto.CreateUserInput)
 	}
 	return user, nil
 }
-func (s *UserService) PatchUser(
+func (s userService) PatchUser(
 	ctx context.Context,
 	id int,
 	input dto.PatchUserInput,
@@ -50,12 +39,12 @@ func (s *UserService) PatchUser(
 
 	// 1. Validate ID
 	if id <= 0 {
-		return nil, ErrInvalidUserID
+		return nil, domain.ErrInvalidInput
 	}
 
 	// 2. Validate that at least one field is provided
 	if input.Name == nil && input.Email == nil {
-		return nil, errors.New("no fields provided for update")
+		return nil, domain.ErrInvalidInput
 	}
 
 	// 3. Fetch existing user
@@ -80,45 +69,45 @@ func (s *UserService) PatchUser(
 
 	return user, nil
 }
-func (s *UserService) GetUserByID(
+func (s userService) GetUserByID(
 	ctx context.Context,
 	id int,
 ) (*domain.User, error) {
 
 	if id <= 0 {
-		return nil, ErrInvalidUserID
+		return nil, domain.ErrInvalidInput
 	}
 
 	return s.repo.GetByID(ctx, id)
 }
-func (s *UserService) GetAllUsers(
+func (s userService) GetAllUsers(
 	ctx context.Context,
 ) ([]*domain.User, error) {
 	return s.repo.GetAll(ctx)
 }
-func (s *UserService) DeleteUser(
+func (s userService) DeleteUser(
 	ctx context.Context,
 	id int,
 ) error {
 
 	if id <= 0 {
-		return ErrInvalidUserID
+		return domain.ErrInvalidInput
 	}
 
 	return s.repo.Delete(ctx, id)
 }
-func (s *UserService) UpdateUser(
+func (s userService) UpdateUser(
 	ctx context.Context,
 	id int,
 	input dto.UpdateUserInput,
 ) (*domain.User, error) {
 
 	if id <= 0 {
-		return nil, ErrInvalidUserID
+		return nil, domain.ErrInvalidInput
 	}
 
 	if input.Name == "" || input.Email == "" {
-		return nil, ErrMissingFields
+		return nil, domain.ErrInvalidInput
 	}
 
 	user := &domain.User{
